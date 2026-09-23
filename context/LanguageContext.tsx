@@ -7,6 +7,7 @@ export type Language = "id" | "en";
 type LanguageContextValue = {
   lang: Language;
   toggleLang: () => void;
+  translate: (indonesian: string, english: string) => string;
 };
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
@@ -18,8 +19,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLang((currentLang) => (currentLang === "id" ? "en" : "id"));
   }
 
+  function translate(indonesian: string, english: string) {
+    return lang === "id" ? indonesian : english;
+  }
+
   return (
-    <LanguageContext.Provider value={{ lang, toggleLang }}>
+    <LanguageContext.Provider value={{ lang, toggleLang, translate }}>
       {children}
     </LanguageContext.Provider>
   );

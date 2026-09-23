@@ -124,7 +124,7 @@ export default function FilmCuratorial() {
                   : "COMPREHENSIVE FILM OVERVIEW & ANALYSIS"}
               </span>
               <h1 className="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-wider uppercase">
-                ROOTS: THE FILM &amp; CURATORIAL VISION
+                {lang === "id" ? "ROOTS: FILM & VISI KURATORIAL" : "ROOTS: THE FILM & CURATORIAL VISION"}
               </h1>
             </div>
 
@@ -132,7 +132,7 @@ export default function FilmCuratorial() {
             <div className="space-y-8 text-neutral-300 leading-relaxed font-light text-sm sm:text-base border-b border-neutral-800 pb-10">
               <div className="space-y-4">
                 <h3 className="font-display text-xl sm:text-2xl font-bold text-amber-400 uppercase tracking-wide">
-                  1. Konteks Sejarah &amp; Memori Kolektif
+                  {lang === "id" ? "1. Konteks Sejarah & Memori Kolektif" : "1. Historical Context & Collective Memory"}
                 </h3>
                 <p>
                   Pada tahun 1923, perupa kelahiran Rusia berdarah Jerman Walter
@@ -159,7 +159,7 @@ export default function FilmCuratorial() {
 
               <div className="space-y-4">
                 <h3 className="font-display text-xl sm:text-2xl font-bold text-amber-400 uppercase tracking-wide">
-                  2. Sosok Hantu Spies &amp; Sanctuarium Villa Iseh
+                  {lang === "id" ? "2. Sosok Hantu Spies & Sanctuarium Villa Iseh" : "2. Spies as a Spectral Presence & Villa Iseh Sanctuary"}
                 </h3>
                 <p>
                   Berpusat pada Villa Iseh yang dibangun Spies di Karangasem pada
@@ -179,10 +179,10 @@ export default function FilmCuratorial() {
             <div className="mt-10 space-y-8 border-b border-neutral-800 pb-10">
               <div>
                 <span className="text-xs font-display tracking-widest text-amber-500 uppercase">
-                  KEPEMIMPINAN KURATORIAL &amp; SINEMATIK
+                  {lang === "id" ? "KEPEMIMPINAN KURATORIAL & SINEMATIK" : "CURATORIAL & CINEMATIC LEADERSHIP"}
                 </span>
                 <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white uppercase mt-1">
-                  VISIONARIS DI BALIK ROOTS
+                  {lang === "id" ? "VISIONARIS DI BALIK ROOTS" : "THE VISIONARIES BEHIND ROOTS"}
                 </h2>
               </div>
 
@@ -192,7 +192,7 @@ export default function FilmCuratorial() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-display px-2.5 py-1 bg-neutral-800 text-amber-400 border border-neutral-700 rounded uppercase">
-                        Sutradara Film &amp; Peneliti
+                        {lang === "id" ? "Sutradara Film & Peneliti" : "Film Director & Researcher"}
                       </span>
                       <span className="text-xs text-neutral-500">
                         Switzerland / Germany
@@ -202,17 +202,16 @@ export default function FilmCuratorial() {
                       Michael Schindhelm
                     </h3>
                     <p className="text-xs text-amber-400 font-medium">
-                      M.Sc. Kimia Kuantum • Penulis • Founding Director Dubai Culture &amp; Arts Authority
+                      {lang === "id"
+                        ? "M.Sc. Kimia Kuantum • Penulis • Founding Director Dubai Culture & Arts Authority"
+                        : "M.Sc. Quantum Chemistry • Writer • Founding Director, Dubai Culture & Arts Authority"}
                     </p>
                     <p className="text-neutral-300 text-xs sm:text-sm leading-relaxed">
-                      Penulis biografi Walter Spies{" "}
-                      <span className="italic">
-                        Walter Spies: Ein Exotisches Leben
-                      </span>{" "}
-                      (Munich, 2018). Mantan General Director Berliner
-                      Opernstiftung dan CEO Theater Basel. Schindhelm meramu
-                      riset analitis mendalam menjadi narasi sinematik yang
-                      mendekonstruksi eksotisme kolonial.
+                      {lang === "id" ? (
+                        <>Penulis biografi Walter Spies <span className="italic">Walter Spies: Ein Exotisches Leben</span> (Munich, 2018). Mantan General Director Berliner Opernstiftung dan CEO Theater Basel. Schindhelm meramu riset analitis mendalam menjadi narasi sinematik yang mendekonstruksi eksotisme kolonial.</>
+                      ) : (
+                        <>Author of the Walter Spies biography <span className="italic">Walter Spies: Ein Exotisches Leben</span> (Munich, 2018). Former General Director of Berliner Opernstiftung and CEO of Theater Basel. Schindhelm transforms deep analytical research into a cinematic narrative that deconstructs colonial exoticism.</>
+                      )}
                     </p>
                   </div>
                   <div className="pt-6 mt-6 border-t border-neutral-800 flex items-center justify-between text-xs text-neutral-400">
@@ -234,13 +233,15 @@ export default function FilmCuratorial() {
             <div className="mt-10 space-y-8">
               <div>
                 <span className="text-xs font-display tracking-widest text-amber-500 uppercase">
-                  PROTAGONIS &amp; TOKOH BUDAYA
+                  {lang === "id" ? "PROTAGONIS & TOKOH BUDAYA" : "PROTAGONISTS & CULTURAL FIGURES"}
                 </span>
                 <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white uppercase mt-1">
-                  SENIMAN &amp; KOLABORATOR BALI
+                  {lang === "id" ? "SENIMAN & KOLABORATOR BALI" : "BALINESE ARTISTS & COLLABORATORS"}
                 </h2>
                 <p className="text-neutral-400 text-xs sm:text-sm mt-1">
-                  Para seniman dan tokoh budaya Bali yang berdialog serta merespons warisan Walter Spies di dalam film dan pameran.
+                  {lang === "id"
+                    ? "Para seniman dan tokoh budaya Bali yang berdialog serta merespons warisan Walter Spies di dalam film dan pameran."
+                    : "Balinese artists and cultural figures who engage with and respond to Walter Spies' legacy in the film and exhibition."}
                 </p>
               </div>
 
@@ -253,7 +254,7 @@ export default function FilmCuratorial() {
                     </div>
                     <div>
                       <h4 className="font-display text-xl font-bold text-white uppercase">Made Bayak</h4>
-                      <p className="text-xs text-amber-400 font-medium">Artivis &amp; Aktivis Lingkungan (Gianyar)</p>
+                      <p className="text-xs text-amber-400 font-medium">{lang === "id" ? "Artivis & Aktivis Lingkungan (Gianyar)" : "Artivist & Environmental Activist (Gianyar)"}</p>
                     </div>
                     <p className="text-neutral-400 text-xs leading-relaxed">
                       Pelopor gerakan <strong className="text-neutral-200">&quot;Plasticology&quot;</strong>, merespons krisis sampah dan alih fungsi lahan di Bali melalui karya instalasi limbah plastik. Menyuarakan kritik tajam atas eksploitasi ekologi pariwisata massal.
@@ -265,7 +266,7 @@ export default function FilmCuratorial() {
                     rel="noreferrer"
                     className="mt-4 text-xs text-amber-400 font-display tracking-wider hover:underline inline-block"
                   >
-                    VIEW PORTFOLIO ↗
+                    {lang === "id" ? "LIHAT PORTOFOLIO" : "VIEW PORTFOLIO"} ↗
                   </a>
                 </div>
 
@@ -277,7 +278,7 @@ export default function FilmCuratorial() {
                     </div>
                     <div>
                       <h4 className="font-display text-xl font-bold text-white uppercase">Gus Dark</h4>
-                      <p className="text-xs text-amber-400 font-medium">Kartunis Editorial &amp; Perupa</p>
+                      <p className="text-xs text-amber-400 font-medium">{lang === "id" ? "Kartunis Editorial & Perupa" : "Editorial Cartoonist & Artist"}</p>
                     </div>
                     <p className="text-neutral-400 text-xs leading-relaxed">
                       Kartunis satir politik asal Bali. Menggunakan seni grafis dan komik untuk mengkritik eksotisme dangkal, perusakan ekosistem, serta dinamika sosial-ekonomi lokal.
@@ -289,7 +290,7 @@ export default function FilmCuratorial() {
                     rel="noreferrer"
                     className="mt-4 text-xs text-amber-400 font-display tracking-wider hover:underline inline-block"
                   >
-                    VIEW PORTFOLIO ↗
+                    {lang === "id" ? "LIHAT PORTOFOLIO" : "VIEW PORTFOLIO"} ↗
                   </a>
                 </div>
 
@@ -301,14 +302,14 @@ export default function FilmCuratorial() {
                     </div>
                     <div>
                       <h4 className="font-display text-xl font-bold text-white uppercase">Prof. I Wayan Dibia</h4>
-                      <p className="text-xs text-amber-400 font-medium">Koreografer &amp; Budayawan</p>
+                      <p className="text-xs text-amber-400 font-medium">{lang === "id" ? "Koreografer & Budayawan" : "Choreographer & Cultural Scholar"}</p>
                     </div>
                     <p className="text-neutral-400 text-xs leading-relaxed">
                       Maestro tari dan akademisi budaya ternama Bali. Memberikan pemikiran mendalam mengenai evolusi tari Kecak dan pengaruh interaksi Spies terhadap seni pertunjukan Bali.
                     </p>
                   </div>
                   <span className="mt-4 text-xs text-neutral-500 font-display tracking-wider block">
-                    AKADEMISI BUDAYA
+                    {lang === "id" ? "AKADEMISI BUDAYA" : "CULTURAL SCHOLAR"}
                   </span>
                 </div>
 
@@ -320,7 +321,7 @@ export default function FilmCuratorial() {
                     </div>
                     <div>
                       <h4 className="font-display text-xl font-bold text-white uppercase">Cok Agung Rai</h4>
-                      <p className="text-xs text-amber-400 font-medium">Pendiri ARMA Museum &amp; Budayawan</p>
+                      <p className="text-xs text-amber-400 font-medium">{lang === "id" ? "Pendiri ARMA Museum & Budayawan" : "ARMA Museum Founder & Cultural Scholar"}</p>
                     </div>
                     <p className="text-neutral-400 text-xs leading-relaxed">
                       Pendiri ARMA Museum Ubud yang memelihara jejak karya seni Walter Spies serta menjadi ruang artikulasi penting bagi seni rupa Bali.
@@ -344,14 +345,14 @@ export default function FilmCuratorial() {
                     </div>
                     <div>
                       <h4 className="font-display text-xl font-bold text-white uppercase">Dewa Ayu Eka Putri</h4>
-                      <p className="text-xs text-amber-400 font-medium">Penari &amp; Perupa Pertunjukan</p>
+                      <p className="text-xs text-amber-400 font-medium">{lang === "id" ? "Penari & Perupa Pertunjukan" : "Dancer & Performance Artist"}</p>
                     </div>
                     <p className="text-neutral-400 text-xs leading-relaxed">
                       Penari dan pengolah tubuh Bali yang menghidupkan kembali roh dan dialog performatif Walter Spies di dalam narasi docu-fiction film ROOTS.
                     </p>
                   </div>
                   <span className="mt-4 text-xs text-neutral-500 font-display tracking-wider block">
-                    SENIMAN PERTUNJUKAN
+                    {lang === "id" ? "SENIMAN PERTUNJUKAN" : "PERFORMANCE ARTIST"}
                   </span>
                 </div>
 
@@ -363,14 +364,14 @@ export default function FilmCuratorial() {
                     </div>
                     <div>
                       <h4 className="font-display text-xl font-bold text-white uppercase">Putu Tangkas Adi</h4>
-                      <p className="text-xs text-amber-400 font-medium">Musisi &amp; Peracik Bunyi</p>
+                      <p className="text-xs text-amber-400 font-medium">{lang === "id" ? "Musisi & Peracik Bunyi" : "Musician & Sound Artist"}</p>
                     </div>
                     <p className="text-neutral-400 text-xs leading-relaxed">
                       Musisi dan peracik bunyi kontemporer yang merespons lanskap suara Bali serta warisan musik gamelan yang pernah diteliti Spies pada dekade 1930-an.
                     </p>
                   </div>
                   <span className="mt-4 text-xs text-neutral-500 font-display tracking-wider block">
-                    SENIMAN BUNYI
+                    {lang === "id" ? "SENIMAN BUNYI" : "SOUND ARTIST"}
                   </span>
                 </div>
               </div>
@@ -383,7 +384,7 @@ export default function FilmCuratorial() {
                 onClick={() => setIsNarativeOpen(false)}
                 className="font-display px-6 py-3 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider rounded transition-all"
               >
-                TUTUP NARASI
+                {lang === "id" ? "TUTUP NARASI" : "CLOSE NARRATIVE"}
               </button>
             </div>
           </div>

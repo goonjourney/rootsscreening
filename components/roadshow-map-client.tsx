@@ -143,7 +143,7 @@ export default function RoadshowMapClient() {
       const marker = leaflet
         .marker([loc.lat, loc.lng], { icon: goldIcon })
         .addTo(map)
-        .bindPopup(buildPopupHtml(loc), {
+        .bindPopup(buildPopupHtml(loc, lang), {
           closeButton: true,
           // Saat Lock View aktif, matikan autoClose agar multiple popup bisa dibuka bersamaan
           autoClose: !isLockView,
@@ -156,7 +156,7 @@ export default function RoadshowMapClient() {
       });
       markersRef.current.push(marker);
     });
-  }, [filteredLocations, isMapReady, isLockView]);
+  }, [filteredLocations, isMapReady, isLockView, lang]);
 
   // --- 4) flyTo saat lokasi dipilih (Hanya jika Lock View OFF) ---
   useEffect(() => {
@@ -203,10 +203,10 @@ export default function RoadshowMapClient() {
       <div className="mx-auto mb-6 flex w-full max-w-7xl flex-col gap-5 px-6 md:flex-row md:items-end md:justify-between lg:px-12">
         <div className="min-w-0">
           <span className="font-sans text-xs uppercase tracking-widest text-amber-500">
-            PETA JELAJAH PEMUTARAN INTERAKTIF
+            {lang === "id" ? "PETA JELAJAH PEMUTARAN INTERAKTIF" : "INTERACTIVE SCREENING MAP"}
           </span>
           <h2 className="mt-1 font-display text-2xl font-bold uppercase tracking-wider text-white sm:text-3xl lg:text-4xl">
-            PETA ROADSHOW TOUR DE JAVA &amp; BALI
+            {lang === "id" ? "PETA ROADSHOW TOUR DE JAVA & BALI" : "JAVA & BALI ROADSHOW MAP"}
           </h2>
         </div>
 
@@ -250,7 +250,7 @@ export default function RoadshowMapClient() {
             className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950/90 px-3.5 py-2 text-xs font-semibold tracking-wider text-amber-400 shadow-xl backdrop-blur-md transition-colors hover:bg-neutral-900"
           >
             <ResetIcon />
-            RESET VIEW
+            {lang === "id" ? "RESET VIEW" : "RESET VIEW"}
           </button>
 
           {/* Tombol Lock View */}
@@ -264,7 +264,11 @@ export default function RoadshowMapClient() {
                 : "border-neutral-800 bg-neutral-950/90 text-neutral-300 hover:bg-neutral-900")
             }
           >
-            <span>{isLockView ? "🔒 LOCK VIEW (ON)" : "🔓 LOCK VIEW (OFF)"}</span>
+            <span>
+              {isLockView
+                ? lang === "id" ? "🔒 KUNCI TAMPILAN (AKTIF)" : "🔒 LOCK VIEW (ON)"
+                : lang === "id" ? "🔓 KUNCI TAMPILAN (NONAKTIF)" : "🔓 LOCK VIEW (OFF)"}
+            </span>
           </button>
         </div>
 
@@ -274,7 +278,7 @@ export default function RoadshowMapClient() {
             onClick={() => setIsDrawerOpen(true)}
             className="absolute right-4 top-4 z-[1000] rounded-lg border border-neutral-800 bg-neutral-950/90 px-3.5 py-2 text-xs font-semibold tracking-wider text-amber-400 shadow-xl backdrop-blur-md hover:bg-neutral-900"
           >
-            LOKASI ▸
+            {lang === "id" ? "LOKASI" : "LOCATIONS"} ▸
           </button>
         )}
 
@@ -288,10 +292,10 @@ export default function RoadshowMapClient() {
           <div className="flex items-center justify-between border-b border-neutral-800 p-4">
             <div>
               <h3 className="text-base font-bold uppercase text-white tracking-wide">
-                LOKASI PEMUTARAN
+                {lang === "id" ? "LOKASI PEMUTARAN" : "SCREENING LOCATIONS"}
               </h3>
               <span className="mt-1 inline-block rounded border border-neutral-800 bg-neutral-900 px-2.5 py-0.5 font-mono text-xs text-amber-400">
-                {filteredLocations.length} Lokasi
+                {filteredLocations.length} {lang === "id" ? "Lokasi" : "Locations"}
               </span>
             </div>
             <button
@@ -308,7 +312,7 @@ export default function RoadshowMapClient() {
           <div className="flex-1 space-y-2.5 overflow-y-auto p-4">
             {filteredLocations.length === 0 && (
               <p className="py-4 text-xs italic text-neutral-500">
-                Tidak ada lokasi untuk wilayah ini.
+                {lang === "id" ? "Tidak ada lokasi untuk wilayah ini." : "No locations in this region."}
               </p>
             )}
 
@@ -337,7 +341,7 @@ export default function RoadshowMapClient() {
                     <span className="text-[11px] text-neutral-400">{loc.date_id}</span>
                   </div>
                   <h4 className="text-sm font-bold uppercase text-white transition-colors group-hover:text-amber-400">
-                    {loc.name_id}
+                    {lang === "id" ? loc.name_id : loc.name_en}
                   </h4>
                   <p className="mt-1 line-clamp-1 text-xs text-neutral-400">
                     {loc.address}
@@ -352,7 +356,7 @@ export default function RoadshowMapClient() {
                       }}
                       className="rounded border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-400 transition-all hover:bg-amber-500 hover:text-neutral-950"
                     >
-                      DETAIL →
+                      {lang === "id" ? "DETAIL" : "DETAIL"} →
                     </button>
                   </div>
                 </div>
@@ -372,7 +376,7 @@ export default function RoadshowMapClient() {
                   detailModalLocation.thumbnailUrl ||
                   "https://michaelschindhelm.com/wp-content/uploads/2024/05/ROOTS_Arma.jpg"
                 }
-                alt={detailModalLocation.name_id}
+                alt={lang === "id" ? detailModalLocation.name_id : detailModalLocation.name_en}
                 className="w-full h-full object-cover"
               />
               <button
@@ -384,19 +388,25 @@ export default function RoadshowMapClient() {
             </div>
 
             <div className="p-6 overflow-y-auto space-y-4">
-              <h3 className="text-xl font-bold text-white uppercase">{detailModalLocation.name_id}</h3>
+              <h3 className="text-xl font-bold text-white uppercase">
+                {lang === "id" ? detailModalLocation.name_id : detailModalLocation.name_en}
+              </h3>
               <p className="text-xs text-amber-400 font-mono">
-                📍 {detailModalLocation.address} | 🕒 {detailModalLocation.date_id} ({detailModalLocation.time})
+                📍 {detailModalLocation.address} | 🕒 {lang === "id" ? detailModalLocation.date_id : detailModalLocation.date_en} ({detailModalLocation.time})
               </p>
 
               <div className="space-y-1">
-                <span className="text-[11px] font-bold uppercase text-neutral-500">Deskripsi</span>
-                <p className="leading-relaxed">{detailModalLocation.desc_id}</p>
+                <span className="text-[11px] font-bold uppercase text-neutral-500">
+                  {lang === "id" ? "Deskripsi" : "Description"}
+                </span>
+                <p className="leading-relaxed">
+                  {lang === "id" ? detailModalLocation.desc_id : detailModalLocation.desc_en}
+                </p>
               </div>
 
               {detailModalLocation.feedback_id && (
                 <div className="p-3 rounded bg-amber-500/5 border border-amber-500/20 italic text-xs text-amber-200">
-                  {detailModalLocation.feedback_id}
+                  {lang === "id" ? detailModalLocation.feedback_id : detailModalLocation.feedback_en}
                 </div>
               )}
 
@@ -407,7 +417,7 @@ export default function RoadshowMapClient() {
                   rel="noreferrer"
                   className="inline-block text-xs font-bold text-amber-400 underline"
                 >
-                  Baca Press Release ↗
+                  {lang === "id" ? "Baca Press Release" : "Read Press Release"} ↗
                 </a>
               )}
             </div>
@@ -417,7 +427,7 @@ export default function RoadshowMapClient() {
                 onClick={() => setDetailModalLocation(null)}
                 className="px-4 py-2 bg-neutral-800 text-white font-bold text-xs uppercase rounded"
               >
-                Tutup
+                {lang === "id" ? "Tutup" : "Close"}
               </button>
             </div>
           </div>
@@ -466,24 +476,26 @@ export default function RoadshowMapClient() {
   );
 }
 
-function buildPopupHtml(loc: RoadshowLocation) {
+function buildPopupHtml(loc: RoadshowLocation, lang: "id" | "en") {
   const imgUrl =
     loc.thumbnailUrl || "https://michaelschindhelm.com/wp-content/uploads/2024/05/ROOTS_Arma.jpg";
+  const name = lang === "id" ? loc.name_id : loc.name_en;
+  const date = lang === "id" ? loc.date_id : loc.date_en;
 
   return `
     <div style="width:220px;">
       <div style="height:100px; width:100%; overflow:hidden; border-radius:6px 6px 0 0; background:#000;">
-        <img src="${imgUrl}" alt="${escapeHtml(loc.name_id)}" style="width:100%; height:100%; object-fit:cover;" />
+        <img src="${imgUrl}" alt="${escapeHtml(name)}" style="width:100%; height:100%; object-fit:cover;" />
       </div>
       <div style="padding:10px 12px 12px 12px;">
         <span style="font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#f59e0b;display:block;margin-bottom:2px;">
-          ${escapeHtml(loc.category_id)}
+          ${escapeHtml(lang === "id" ? loc.category_id : loc.category_en)}
         </span>
         <h5 style="font-weight:700;font-size:13px;color:#ffffff;text-transform:uppercase;margin:0 0 4px 0;line-height:1.2;">
-          ${escapeHtml(loc.name_id)}
+          ${escapeHtml(name)}
         </h5>
         <p style="font-size:11px;color:#a3a3a3;margin:0 0 8px 0;">
-          ${escapeHtml(loc.date_id)} (${escapeHtml(loc.time)})
+          ${escapeHtml(date)} (${escapeHtml(loc.time)})
         </p>
         <button
           onclick="window.dispatchEvent(new CustomEvent('open-location-detail', { detail: '${loc.id}' }))"

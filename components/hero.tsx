@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function Hero({ data }: { data: any }) {
+  const { translate } = useLanguage();
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -25,12 +27,18 @@ export default function Hero({ data }: { data: any }) {
           {/* Kolom Kiri: Teks & Tombol Trailer */}
           <div className='lg:col-span-6 space-y-6 text-left z-30'>
             <h1 className='hero-fade-in-up hero-fade-in-up-delay-1 font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight uppercase tracking-wide max-w-lg'>
-              {data?.title || 'One Hundred Years Walter Spies in Bali'}
+              {data?.title
+                ? translate(data.title, data.title_en || data.title)
+                : 'One Hundred Years Walter Spies in Bali'}
             </h1>
 
             <p className='hero-fade-in-up hero-fade-in-up-delay-2 text-neutral-300 text-xs sm:text-sm leading-relaxed max-w-md font-light'>
-              {data?.synopsis ||
-                'Situs resmi tur pemutaran film docu-fiction karya Michael Schindhelm. Menelusuri 100 tahun jejak estetika Walter Spies, eksploitasi pariwisata massal, krisis ekologi subak, dan dialog kritis kebudayaan Bali.'}
+              {data?.synopsis
+                ? translate(data.synopsis, data.synopsis_en || data.synopsis)
+                : translate(
+                    'Situs resmi tur pemutaran film docu-fiction karya Michael Schindhelm. Menelusuri 100 tahun jejak estetika Walter Spies, eksploitasi pariwisata massal, krisis ekologi subak, dan dialog kritis kebudayaan Bali.',
+                    'Official website for the docu-fiction film tour by Michael Schindhelm. Tracing 100 years of Walter Spies, mass tourism, the subak ecological crisis, and critical dialogue on Balinese culture.'
+                  )}
             </p>
 
             <div className='pt-4'>
@@ -44,7 +52,7 @@ export default function Hero({ data }: { data: any }) {
                 }}
                 className='px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs tracking-widest uppercase rounded shadow-lg transition-all hover:scale-105'
               >
-                JADWAL PEMUTARAN TERDEKAT ↓
+                {translate('JADWAL PEMUTARAN TERDEKAT', 'NEAREST SCREENING SCHEDULE')} ↓
               </button>
             </div>
           </div>

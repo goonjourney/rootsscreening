@@ -14,8 +14,11 @@ export default async function Home() {
         <Hero
           data={{
             title: "One Hundred Years Walter Spies in Bali",
+            title_en: "One Hundred Years of Walter Spies in Bali",
             synopsis:
               "Situs resmi tur pemutaran film docu-fiction karya Michael Schindhelm di Indonesia & Australia. Menelusuri 100 tahun jejak estetika Walter Spies, eksploitasi pariwisata massal, krisis ekologi subak, dan dialog kritis kebudayaan Bali.",
+            synopsis_en:
+              "Official website for the docu-fiction film tour by Michael Schindhelm in Indonesia and Australia. Tracing 100 years of Walter Spies, mass tourism, the subak ecological crisis, and critical dialogue on Balinese culture.",
           }}
         />
       </div>
