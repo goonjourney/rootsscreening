@@ -19,7 +19,6 @@ const Page: Collection = {
       name: 'blocks',
       label: 'Sections Halaman ROOTS',
       templates: [
-        // 1. Hero Block
         {
           name: 'hero',
           label: '1. Hero Section',
@@ -30,7 +29,6 @@ const Page: Collection = {
             { type: 'string', name: 'synopsis_en', label: 'Sinopsis (EN)', ui: { component: 'textarea' } },
           ],
         },
-        // 2. Roadshow Map Block
         {
           name: 'roadshowMap',
           label: '2. Peta & Jadwal Roadshow',
@@ -38,7 +36,6 @@ const Page: Collection = {
             { type: 'string', name: 'sectionTitle', label: 'Judul Section' },
           ],
         },
-        // 3. Film & Curatorial Block
         {
           name: 'filmCuratorial',
           label: '3. The Film & Kuratorial',
@@ -46,7 +43,6 @@ const Page: Collection = {
             { type: 'string', name: 'sectionTitle', label: 'Judul Section' },
           ],
         },
-        // 4. Exhibitions & Media Block
         {
           name: 'exhibitionsMedia',
           label: '4. Exhibitions & Media',
