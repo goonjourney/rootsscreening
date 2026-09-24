@@ -1,12 +1,4 @@
 import type { Collection } from 'tinacms';
-import { heroBlockSchema } from '@/components/blocks/hero';
-import { contentBlockSchema } from '@/components/blocks/content';
-import { testimonialBlockSchema } from '@/components/blocks/testimonial';
-import { featureBlockSchema } from '@/components/blocks/features';
-import { videoBlockSchema } from '@/components/blocks/video';
-import { calloutBlockSchema } from '@/components/blocks/callout';
-import { statsBlockSchema } from '@/components/blocks/stats';
-import { ctaBlockSchema } from '@/components/blocks/call-to-action';
 
 const Page: Collection = {
   label: 'Pages',
@@ -16,9 +8,7 @@ const Page: Collection = {
   ui: {
     router: ({ document }) => {
       const filepath = document._sys.breadcrumbs.join('/');
-      if (filepath === 'home') {
-        return '/';
-      }
+      if (filepath === 'home') return '/';
       return `/${filepath}`;
     },
   },
@@ -27,19 +17,43 @@ const Page: Collection = {
       type: 'object',
       list: true,
       name: 'blocks',
-      label: 'Sections',
-      ui: {
-        visualSelector: true,
-      },
+      label: 'Sections Halaman ROOTS',
       templates: [
-        heroBlockSchema,
-        calloutBlockSchema,
-        featureBlockSchema,
-        statsBlockSchema,
-        ctaBlockSchema,
-        contentBlockSchema,
-        testimonialBlockSchema,
-        videoBlockSchema,
+        // 1. Hero Block
+        {
+          name: 'hero',
+          label: '1. Hero Section',
+          fields: [
+            { type: 'string', name: 'title', label: 'Judul (ID)' },
+            { type: 'string', name: 'title_en', label: 'Judul (EN)' },
+            { type: 'string', name: 'synopsis', label: 'Sinopsis (ID)', ui: { component: 'textarea' } },
+            { type: 'string', name: 'synopsis_en', label: 'Sinopsis (EN)', ui: { component: 'textarea' } },
+          ],
+        },
+        // 2. Roadshow Map Block
+        {
+          name: 'roadshowMap',
+          label: '2. Peta & Jadwal Roadshow',
+          fields: [
+            { type: 'string', name: 'sectionTitle', label: 'Judul Section' },
+          ],
+        },
+        // 3. Film & Curatorial Block
+        {
+          name: 'filmCuratorial',
+          label: '3. The Film & Kuratorial',
+          fields: [
+            { type: 'string', name: 'sectionTitle', label: 'Judul Section' },
+          ],
+        },
+        // 4. Exhibitions & Media Block
+        {
+          name: 'exhibitionsMedia',
+          label: '4. Exhibitions & Media',
+          fields: [
+            { type: 'string', name: 'sectionTitle', label: 'Judul Section' },
+          ],
+        },
       ],
     },
   ],
