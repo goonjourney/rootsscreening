@@ -5,8 +5,6 @@ module.exports = {
       documents: [
         "tina/__generated__/queries.gql",
         "tina/__generated__/frags.gql",
-        "tina/queries/queries.gql",
-        "tina/queries/frags.gql",
         "pages/**/*.{graphql,js,ts,jsx,tsx}",
       ],
     },

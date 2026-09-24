@@ -1,0 +1,24 @@
+{
+  "title": "ARMA Museum Ubud",
+  "region": "bali",
+  "category_id": "Museum & Galeri",
+  "category_en": "Museum & Gallery",
+  "date": "2025-06-14",
+  "time": "17.30 WITA",
+  "dateLabel_id": "25 Mei & 14 Juni 2025",
+  "dateLabel_en": "May 25 & June 14, 2025",
+  "address": "Jl. Made Lebah, Mas, Ubud, Gianyar, Bali",
+  "lat": -8.5204,
+  "lng": 115.2638,
+  "thumbnail": "/uploads/screeninglocations/ROOTS-BWI.jpeg",
+  "description_id": "Pemutaran film spesial yang dirangkaikan dengan pameran seni rupa ROOTS di ARMA Museum Ubud.",
+  "description_en": "Special screening coupled with the ROOTS fine art exhibition at ARMA Museum Ubud.",
+  "review_id": "Diskusi yang sangat membuka ruang kritis baru tentang warisan sejarah Spies dan komodifikasi pariwisata Bali hari ini.",
+  "review_en": "Engaging discussion opening new critical discourse on Spies historical legacy.",
+  "mediaLinks": [
+    {
+      "title": "Press Release",
+      "url": "https://kanalbali.id"
+    }
+  ]
+}

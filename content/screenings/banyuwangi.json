@@ -1,0 +1,22 @@
+{
+  "title": "Disbudpar Kabupaten Banyuwangi",
+  "title_en": "Disbudpar Banyuwangi Office",
+  "region": "jatim",
+  "category_id": "Institusi Pemerintah",
+  "category_en": "Government Authority",
+  "date": "2026-09-02",
+  "time": "08.30 WIB",
+  "dateLabel_id": "1 & 2 September 2026",
+  "dateLabel_en": "Sep 1-2, 2026",
+  "address": "Jl. Jenderal Ahmad Yani No. 78, Taman Baru, Banyuwangi",
+  "lat": -8.2192,
+  "lng": 114.3691,
+  "thumbnail": "/uploads/screeninglocations/ROOTS-BWI2.jpeg",
+  "gallery": [
+    "/uploads/screeninglocations/ROOTS-BWI.jpeg"
+  ],
+  "description_id": "Penayangan resmi bekerja sama dengan Dinas Kebudayaan dan Pariwisata Banyuwangi.",
+  "description_en": "Official screening co-hosted with Banyuwangi Culture and Tourism Office.",
+  "review_id": "Memberikan wawasan krusial bagi penyusunan roadmap pariwisata daerah yang berwawasan lingkungan dan menjaga tradisi lokal.",
+  "review_en": "Provided key insights for regional tourism roadmap planning focusing on sustainability and tradition."
+}

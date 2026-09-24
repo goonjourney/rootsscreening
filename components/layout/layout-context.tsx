@@ -1,37 +1,50 @@
 "use client";
 import React, { useState, useContext } from "react";
-type GlobalSettings = any;
+
+export interface GlobalSettings {
+  header?: {
+    nav?: Array<{ href?: string; label?: string }>;
+  };
+  footer?: {
+    social?: Array<{ url?: string; icon?: Record<string, unknown> }>;
+  };
+  theme: {
+    color: string;
+    darkMode: string;
+  };
+}
 
 interface LayoutState {
-  globalSettings: GlobalQuery["global"];
-  setGlobalSettings: React.Dispatch<
-    React.SetStateAction<GlobalQuery["global"]>
-  >;
-  pageData: {};
-  setPageData: React.Dispatch<React.SetStateAction<{}>>;
-  theme: GlobalQuery["global"]["theme"];
+  globalSettings: GlobalSettings;
+  setGlobalSettings: React.Dispatch<React.SetStateAction<GlobalSettings>>;
+  pageData: Record<string, unknown>;
+  setPageData: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
+  theme: GlobalSettings["theme"];
 }
 
 const LayoutContext = React.createContext<LayoutState | undefined>(undefined);
 
 export const useLayout = () => {
   const context = useContext(LayoutContext);
-  return (
-    context || {
-      theme: {
-        color: "blue",
-        darkMode: "default",
-      },
-      globalSettings: undefined,
-      pageData: undefined,
-    }
-  );
+  if (context) return context;
+
+  const globalSettings: GlobalSettings = {
+    theme: { color: "blue", darkMode: "default" },
+  };
+
+  return {
+    globalSettings,
+    setGlobalSettings: () => undefined,
+    pageData: {},
+    setPageData: () => undefined,
+    theme: globalSettings.theme,
+  } satisfies LayoutState;
 };
 
 interface LayoutProviderProps {
   children: React.ReactNode;
-  globalSettings: GlobalQuery["global"];
-  pageData: {};
+  globalSettings: GlobalSettings;
+  pageData?: Record<string, unknown>;
 }
 
 export const LayoutProvider: React.FC<LayoutProviderProps> = ({
@@ -39,10 +52,12 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({
   globalSettings: initialGlobalSettings,
   pageData: initialPageData,
 }) => {
-  const [globalSettings, setGlobalSettings] = useState<GlobalQuery["global"]>(
+  const [globalSettings, setGlobalSettings] = useState<GlobalSettings>(
     initialGlobalSettings
   );
-  const [pageData, setPageData] = useState<{}>(initialPageData);
+  const [pageData, setPageData] = useState<Record<string, unknown>>(
+    initialPageData ?? {}
+  );
 
   const theme = globalSettings.theme;
 

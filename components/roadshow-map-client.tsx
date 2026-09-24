@@ -8,7 +8,10 @@ import {
   DEFAULT_ZOOM,
   FLY_TO_ZOOM,
   REGION_TABS,
-  locationsData,
+  getStatus,
+  todayISO,
+  type ScreeningStatus,
+  type StatusFilter,
   type RegionKey,
   type RoadshowLocation,
 } from "@/components/roadshow-data";
@@ -20,7 +23,7 @@ const TILE_URL =
 const TILE_ATTRIBUTION =
   'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noreferrer">Esri</a>';
 
-export default function RoadshowMapClient() {
+  export default function RoadshowMapClient({ locations }: { locations: RoadshowLocation[] }) {
   const { lang } = useLanguage();
 
   const [detailModalLocation, setDetailModalLocation] = useState<RoadshowLocation | null>(null);
@@ -38,14 +41,46 @@ export default function RoadshowMapClient() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
-  const filteredLocations = useMemo(() => {
-    if (activeRegion === "all") return locationsData;
-    return locationsData.filter((loc) => loc.region === activeRegion);
-  }, [activeRegion]);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+const today = useMemo(() => todayISO(), []);
+
+// Filter wilayah saja, dipakai untuk menghitung jumlah per status
+const regionLocations = useMemo(
+  () => (activeRegion === "all" ? locations : locations.filter((l) => l.region === activeRegion)),
+  [activeRegion, locations]
+);
+
+const counts = useMemo(() => {
+  const c = { all: regionLocations.length, upcoming: 0, finished: 0 };
+  regionLocations.forEach((l) => {
+    if (getStatus(l, today) === "finished") c.finished++;
+    else c.upcoming++; // termasuk TBA
+  });
+  return c;
+}, [regionLocations, today]);
+
+const filteredLocations = useMemo(() => {
+  const ORDER = { upcoming: 0, tba: 1, finished: 2 } as const;
+  return regionLocations
+    .filter((l) => {
+      const s = getStatus(l, today);
+      if (statusFilter === "upcoming") return s !== "finished";
+      if (statusFilter === "finished") return s === "finished";
+      return true;
+    })
+    .sort((a, b) => {
+      const sa = getStatus(a, today);
+      const sb = getStatus(b, today);
+      if (sa !== sb) return ORDER[sa] - ORDER[sb];
+      if (sa === "upcoming") return (a.date ?? "").localeCompare(b.date ?? "");
+      if (sa === "finished") return (b.date ?? "").localeCompare(a.date ?? "");
+      return 0;
+    });
+}, [regionLocations, statusFilter, today]);
 
   const selectedLocation = useMemo(
-    () => locationsData.find((loc) => loc.id === selectedId) ?? null,
-    [selectedId]
+    () => locations.find((loc) => loc.id === selectedId) ?? null,
+    [selectedId, locations]
   );
 
   // --- 1) Inisialisasi peta ---
@@ -113,7 +148,7 @@ export default function RoadshowMapClient() {
   // --- 2) Event listener modal detail ---
   useEffect(() => {
     const handleOpenDetailModal = (e: CustomEvent<string>) => {
-      const loc = locationsData.find((item) => item.id === e.detail);
+      const loc = locations.find((item) => item.id === e.detail);
       if (loc) setDetailModalLocation(loc);
     };
 
@@ -121,7 +156,7 @@ export default function RoadshowMapClient() {
     return () => {
       window.removeEventListener("open-location-detail" as any, handleOpenDetailModal);
     };
-  }, []);
+  }, [locations]);
 
   // --- 3) Render ulang marker saat filter region / status Lock View berubah ---
   useEffect(() => {
@@ -132,18 +167,18 @@ export default function RoadshowMapClient() {
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
-    const goldIcon = leaflet.divIcon({
+    filteredLocations.forEach((loc) => {
+    const status = getStatus(loc, today);
+    const icon = leaflet.divIcon({
       className: "roadshow-marker",
-      html: '<span class="roadshow-marker-dot"></span>',
+      html: `<span class="roadshow-marker-dot is-${status}"></span>`,
       iconSize: [16, 16],
       iconAnchor: [8, 8],
-    });
-
-    filteredLocations.forEach((loc) => {
-      const marker = leaflet
-        .marker([loc.lat, loc.lng], { icon: goldIcon })
-        .addTo(map)
-        .bindPopup(buildPopupHtml(loc, lang), {
+  });
+  const marker = leaflet
+    .marker([loc.lat, loc.lng], { icon })
+    .addTo(map)
+    .bindPopup(buildPopupHtml(loc, lang, status), {
           closeButton: true,
           // Saat Lock View aktif, matikan autoClose agar multiple popup bisa dibuka bersamaan
           autoClose: !isLockView,
@@ -156,7 +191,7 @@ export default function RoadshowMapClient() {
       });
       markersRef.current.push(marker);
     });
-  }, [filteredLocations, isMapReady, isLockView, lang]);
+  }, [filteredLocations, isMapReady, isLockView, lang, today]);
 
   // --- 4) flyTo saat lokasi dipilih (Hanya jika Lock View OFF) ---
   useEffect(() => {
@@ -197,6 +232,10 @@ export default function RoadshowMapClient() {
     map.flyTo(DEFAULT_CENTER, DEFAULT_ZOOM, { duration: 1 });
   }
 
+  const modalStatus: ScreeningStatus = detailModalLocation
+    ? getStatus(detailModalLocation, today)
+    : "finished";
+
   return (
     <section className="relative w-full bg-neutral-950 text-white py-8">
       {/* Header + Tab Filter Region */}
@@ -231,9 +270,11 @@ export default function RoadshowMapClient() {
         </div>
       </div>
 
-      {/* Container Peta full-bleed */}
-      <div className="relative h-[650px] w-full overflow-hidden border-y border-neutral-800 bg-neutral-900">
-        <div ref={containerRef} className="z-0 h-full w-full" />
+        {/* Container Peta full-bleed */}
+        <div className="relative flex h-[85svh] w-full flex-col overflow-hidden border-y border-neutral-800 bg-neutral-900 md:block md:h-[650px]">
+          {/* Area peta */}
+          <div className="relative h-1/2 w-full md:h-full">
+          <div ref={containerRef} className="z-0 h-full w-full" />
 
         {!isMapReady && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-neutral-900 text-sm font-mono text-neutral-500">
@@ -242,7 +283,7 @@ export default function RoadshowMapClient() {
         )}
 
         {/* Tombol Kontrol Peta */}
-        <div className="absolute left-20 top-4 z-[1000] flex items-center gap-2">
+        <div className="absolute left-14 top-2 z-[1000] flex items-center gap-2 md:left-20 md:top-4">
           {/* Tombol Reset View */}
           <button
             type="button"
@@ -281,6 +322,7 @@ export default function RoadshowMapClient() {
             {lang === "id" ? "LOKASI" : "LOCATIONS"} ▸
           </button>
         )}
+        </div>
 
         {/* Side Drawer Panel */}
         <div
@@ -308,11 +350,38 @@ export default function RoadshowMapClient() {
             </button>
           </div>
 
+          <div className="flex flex-wrap gap-1.5 border-b border-neutral-800 px-4 py-2.5">
+          {([
+          { key: "all", id: "SEMUA", en: "ALL" },
+          { key: "upcoming", id: "MENDATANG", en: "UPCOMING" },
+          { key: "finished", id: "SELESAI", en: "FINISHED" },
+          ] as const).map((t) => (
+          <button
+          key={t.key}
+          type="button"
+          onClick={() => {
+          setStatusFilter(t.key);
+          setSelectedId(null);
+          }}
+          className={
+          "rounded px-2.5 py-1 text-[11px] font-bold tracking-wider transition-all " +
+          (statusFilter === t.key
+          ? "bg-amber-500 text-neutral-950"
+          : "border border-neutral-800 bg-neutral-900 text-neutral-300 hover:bg-neutral-800")
+          }
+          >
+          {lang === "id" ? t.id : t.en} ({counts[t.key]})
+          </button>
+          ))}
+          </div>
+
           {/* Box List Lokasi (Kembali Bersih Tanpa Thumbnail) */}
           <div className="flex-1 space-y-2.5 overflow-y-auto p-4">
             {filteredLocations.length === 0 && (
               <p className="py-4 text-xs italic text-neutral-500">
-                {lang === "id" ? "Tidak ada lokasi untuk wilayah ini." : "No locations in this region."}
+                {statusFilter === "upcoming"
+                ? lang === "id" ? "Belum ada jadwal screening mendatang di wilayah ini." : "No upcoming screenings in this region yet."
+                : lang === "id" ? "Tidak ada lokasi untuk filter ini." : "No locations for this filter."}
               </p>
             )}
 
@@ -334,12 +403,16 @@ export default function RoadshowMapClient() {
                       : "border-neutral-800/80 bg-neutral-900/60 hover:border-amber-500/40 hover:bg-neutral-900")
                   }
                 >
-                  <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="rounded border border-neutral-800 bg-black px-2 py-0.5 text-[10px] font-mono text-amber-400">
-                      {loc.category_id}
-                    </span>
-                    <span className="text-[11px] text-neutral-400">{loc.date_id}</span>
+                  <div className="mb-1.5 flex items-center justify-between gap-2 text-xs">
+                      <StatusBadge status={getStatus(loc, today)} lang={lang} />
+                      <span className="text-[11px] text-neutral-400">
+                      {lang === "id" ? loc.date_id : loc.date_en}
+                      </span>
                   </div>
+                      <span className="mb-1 inline-block rounded border border-neutral-800 bg-black px-2 py-0.5 text-[10px] font-mono text-amber-400">
+                      {lang === "id" ? loc.category_id : loc.category_en}
+                      </span>
+
                   <h4 className="text-sm font-bold uppercase text-white transition-colors group-hover:text-amber-400">
                     {lang === "id" ? loc.name_id : loc.name_en}
                   </h4>
@@ -387,40 +460,95 @@ export default function RoadshowMapClient() {
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto space-y-4">
+            <div className="p-6 overflow-y-auto space-y-5">
+              <div className="space-y-2">
+              <StatusBadge status={modalStatus} lang={lang} />
               <h3 className="text-xl font-bold text-white uppercase">
-                {lang === "id" ? detailModalLocation.name_id : detailModalLocation.name_en}
+              {lang === "id" ? detailModalLocation.name_id : detailModalLocation.name_en}
               </h3>
               <p className="text-xs text-amber-400 font-mono">
-                📍 {detailModalLocation.address} | 🕒 {lang === "id" ? detailModalLocation.date_id : detailModalLocation.date_en} ({detailModalLocation.time})
+              📍 {detailModalLocation.address} | 🕒{" "}
+              {lang === "id" ? detailModalLocation.date_id : detailModalLocation.date_en}
+              {detailModalLocation.time ? ` (${detailModalLocation.time})` : ""}
               </p>
-
-              <div className="space-y-1">
-                <span className="text-[11px] font-bold uppercase text-neutral-500">
-                  {lang === "id" ? "Deskripsi" : "Description"}
-                </span>
-                <p className="leading-relaxed">
-                  {lang === "id" ? detailModalLocation.desc_id : detailModalLocation.desc_en}
-                </p>
-              </div>
-
-              {detailModalLocation.feedback_id && (
-                <div className="p-3 rounded bg-amber-500/5 border border-amber-500/20 italic text-xs text-amber-200">
-                  {lang === "id" ? detailModalLocation.feedback_id : detailModalLocation.feedback_en}
-                </div>
-              )}
-
-              {detailModalLocation.mediaReleaseUrl && (
-                <a
-                  href={detailModalLocation.mediaReleaseUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-block text-xs font-bold text-amber-400 underline"
-                >
-                  {lang === "id" ? "Baca Press Release" : "Read Press Release"} ↗
-                </a>
-              )}
             </div>
+
+  {/* Undangan / deskripsi event */}
+  <div className="space-y-1">
+    <span className="text-[11px] font-bold uppercase text-neutral-500">
+      {modalStatus === "finished"
+        ? lang === "id" ? "Tentang Event" : "About the Event"
+        : lang === "id" ? "Undangan" : "Invitation"}
+    </span>
+    <p className="leading-relaxed">
+      {lang === "id" ? detailModalLocation.desc_id : detailModalLocation.desc_en}
+    </p>
+  </div>
+
+  {/* Tombol daftar, hanya untuk event yang belum berlangsung */}
+  {modalStatus !== "finished" && detailModalLocation.rsvpUrl && (
+    <a
+      href={detailModalLocation.rsvpUrl}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-block rounded bg-amber-500 px-4 py-2 text-xs font-bold uppercase tracking-wider text-neutral-950 transition-colors hover:bg-amber-400"
+    >
+      {lang === "id" ? "Daftar / Hubungi Penyelenggara" : "Register / Contact Host"} ↗
+    </a>
+  )}
+
+  {/* Ulasan event, hanya untuk event yang sudah selesai */}
+  {modalStatus === "finished" && detailModalLocation.feedback_id && (
+    <div className="space-y-1">
+      <span className="text-[11px] font-bold uppercase text-neutral-500">
+        {lang === "id" ? "Ulasan Event" : "Event Review"}
+      </span>
+      <div className="p-3 rounded bg-amber-500/5 border border-amber-500/20 italic text-xs text-amber-200">
+        {lang === "id" ? detailModalLocation.feedback_id : detailModalLocation.feedback_en}
+      </div>
+    </div>
+  )}
+
+  {/* Galeri foto */}
+  {!!detailModalLocation.gallery?.length && (
+    <div className="space-y-1">
+      <span className="text-[11px] font-bold uppercase text-neutral-500">
+        {lang === "id" ? "Galeri" : "Gallery"}
+      </span>
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {detailModalLocation.gallery.map((src, i) => (
+          <a key={i} href={src} target="_blank" rel="noreferrer" className="flex-none">
+            <img src={src} alt="" className="h-24 w-36 rounded object-cover" />
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* Ulasan media */}
+  {!!detailModalLocation.mediaLinks?.length && (
+    <div className="space-y-2">
+      <span className="text-[11px] font-bold uppercase text-neutral-500">
+        {lang === "id" ? "Ulasan Media" : "Media Coverage"}
+      </span>
+      {detailModalLocation.mediaLinks.map((m, i) => {
+        const note = lang === "id" ? m.note_id : m.note_en || m.note_id;
+        return (
+          <a
+            key={i}
+            href={m.url}
+            target="_blank"
+            rel="noreferrer"
+            className="block rounded border border-neutral-800 p-3 transition-colors hover:border-amber-500/50"
+          >
+            <span className="text-xs font-bold text-amber-400">{m.title} ↗</span>
+            {note && <span className="mt-0.5 block text-xs text-neutral-400">{note}</span>}
+          </a>
+        );
+      })}
+    </div>
+  )}
+</div>
 
             <div className="p-4 bg-neutral-950 border-t border-neutral-800 text-right">
               <button
@@ -446,6 +574,15 @@ export default function RoadshowMapClient() {
           box-shadow: 0 0 12px #f59e0b;
           cursor: pointer;
         }
+          .roadshow-marker-dot.is-finished {
+          background-color: #737373;
+          box-shadow: none;
+          }
+          .roadshow-marker-dot.is-tba {
+          background-color: transparent;
+          border: 2px dashed #f59e0b;
+          box-shadow: none;
+          }
         .roadshow-popup .leaflet-popup-content-wrapper {
           background-color: #171717 !important;
           color: #ffffff !important;
@@ -476,11 +613,16 @@ export default function RoadshowMapClient() {
   );
 }
 
-function buildPopupHtml(loc: RoadshowLocation, lang: "id" | "en") {
-  const imgUrl =
-    loc.thumbnailUrl || "https://michaelschindhelm.com/wp-content/uploads/2024/05/ROOTS_Arma.jpg";
+function buildPopupHtml(loc: RoadshowLocation, lang: "id" | "en", status: ScreeningStatus) {
   const name = lang === "id" ? loc.name_id : loc.name_en;
   const date = lang === "id" ? loc.date_id : loc.date_en;
+  const imgUrl = loc.thumbnailUrl ?? "";
+  const statusLabel = {
+    upcoming: lang === "id" ? "Mendatang" : "Upcoming",
+    finished: lang === "id" ? "Selesai" : "Finished",
+    tba: "TBA",
+  }[status];
+  const statusColor = { upcoming: "#f59e0b", finished: "#737373", tba: "#a3a3a3" }[status];
 
   return `
     <div style="width:220px;">
@@ -488,8 +630,8 @@ function buildPopupHtml(loc: RoadshowLocation, lang: "id" | "en") {
         <img src="${imgUrl}" alt="${escapeHtml(name)}" style="width:100%; height:100%; object-fit:cover;" />
       </div>
       <div style="padding:10px 12px 12px 12px;">
-        <span style="font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#f59e0b;display:block;margin-bottom:2px;">
-          ${escapeHtml(lang === "id" ? loc.category_id : loc.category_en)}
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#a3a3a3;display:block;margin-bottom:2px;">
+          <span style="color:${statusColor};">● ${statusLabel}</span> · ${escapeHtml(lang === "id" ? loc.category_id : loc.category_en)}
         </span>
         <h5 style="font-weight:700;font-size:13px;color:#ffffff;text-transform:uppercase;margin:0 0 4px 0;line-height:1.2;">
           ${escapeHtml(name)}
@@ -533,5 +675,17 @@ function ResetIcon() {
       <path d="M3 12a9 9 0 1 0 3-6.7" />
       <path d="M3 4v5h5" />
     </svg>
+  );
+}
+function StatusBadge({ status, lang }: { status: ScreeningStatus; lang: "id" | "en" }) {
+  const s = {
+    upcoming: { id: "MENDATANG", en: "UPCOMING", cls: "border-amber-500 bg-amber-500 text-neutral-950" },
+    finished: { id: "SELESAI", en: "FINISHED", cls: "border-neutral-700 bg-neutral-800 text-neutral-400" },
+    tba: { id: "TBA", en: "TBA", cls: "border-dashed border-amber-500/60 text-amber-400" },
+  }[status];
+  return (
+    <span className={"rounded border px-2 py-0.5 text-[10px] font-bold tracking-wider " + s.cls}>
+      {s[lang]}
+    </span>
   );
 }

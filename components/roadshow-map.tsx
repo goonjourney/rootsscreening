@@ -1,23 +1,23 @@
+// components/roadshow-map.tsx
+//
+// Entry point yang dipakai di halaman Next.js. Leaflet menyentuh `window`,
+// jadi komponen aslinya (RoadshowMapClient) hanya boleh dirender di client.
+// next/dynamic dengan { ssr: false } mencegah error "window is not defined".
+
 "use client";
 
 import dynamic from "next/dynamic";
-import { useLanguage } from "@/context/LanguageContext";
+import type { RoadshowLocation } from "./roadshow-data";
 
 const RoadshowMapClient = dynamic(() => import("./roadshow-map-client"), {
   ssr: false,
-  loading: () => <RoadshowMapLoading />,
+  loading: () => (
+    <div className="flex h-[620px] w-full items-center justify-center border-y border-neutral-800 bg-neutral-900 text-sm text-neutral-500">
+      Memuat peta roadshow...
+    </div>
+  ),
 });
 
-function RoadshowMapLoading() {
-  const { lang } = useLanguage();
-
-  return (
-    <div className="flex h-[620px] w-full items-center justify-center border-y border-neutral-800 bg-neutral-900 text-sm text-neutral-500 font-mono">
-      {lang === "id" ? "Memuat peta roadshow..." : "Loading roadshow map..."}
-    </div>
-  );
-}
-
-export default function RoadshowMap() {
-  return <RoadshowMapClient />;
+export default function RoadshowMap({ locations }: { locations: RoadshowLocation[] }) {
+  return <RoadshowMapClient locations={locations} />;
 }

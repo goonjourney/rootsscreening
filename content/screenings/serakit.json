@@ -1,0 +1,22 @@
+{
+  "title": "Studio Serakit Jember",
+  "region": "jatim",
+  "category_id": "Ruang Alternatif",
+  "category_en": "Alternative Space",
+  "date": "2026-08-29",
+  "time": "19.30 WIB",
+  "address": "Jl. Koptu Berlian, Jambutan, Antirogo, Jember",
+  "lat": -8.142,
+  "lng": 113.725,
+  "thumbnail": "/uploads/screeninglocations/ROOTS-Jember-(4).jpeg",
+  "gallery": [
+    "/uploads/screeninglocations/ROOTS-Jember-(1).jpeg",
+    "/uploads/screeninglocations/ROOTS-Jember-(2).jpeg",
+    "/uploads/screeninglocations/ROOTS-Jember-(3).jpeg",
+    ""
+  ],
+  "description_id": "Pembuka leg Jawa Timur di studio independen kawasan Jember.",
+  "description_en": "Opening screening for the East Java leg at an independent studio in Jember.",
+  "review_id": "Respon positif komunitas film independen Jember terhadap eksperimentasi docu-fiction.",
+  "review_en": "Warm response from Jember indie film community towards docu-fiction narrative style."
+}

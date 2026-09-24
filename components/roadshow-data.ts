@@ -1,5 +1,17 @@
 export type RegionKey = "all" | "bali" | "jogja" | "jabar" | "jakarta" | "jatim";
 
+export interface MediaLink {
+  title: string;
+  url: string;
+  note_id?: string;
+  note_en?: string;
+}
+export interface RoadshowLocation {
+  date?: string; // format 2026-10-15, kosong = TBA
+  gallery?: string[];
+  mediaLinks?: MediaLink[];
+  rsvpUrl?: string;
+}
 export interface RoadshowLocation {
   id: string;
   region: Exclude<RegionKey, "all">;
@@ -602,3 +614,16 @@ export const locationsData: RoadshowLocation[] = [
     thumbnailUrl: "https://michaelschindhelm.com/wp-content/uploads/2024/05/ROOTS_Arma.jpg",
   },
 ];
+
+export type ScreeningStatus = "upcoming" | "finished" | "tba";
+export type StatusFilter = "all" | "upcoming" | "finished";
+
+// Tanggal hari ini di WIB, format 2026-09-24
+export function todayISO() {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
+}
+
+export function getStatus(loc: { date?: string }, today: string): ScreeningStatus {
+  if (!loc.date) return "tba";
+  return loc.date < today ? "finished" : "upcoming";
+}
