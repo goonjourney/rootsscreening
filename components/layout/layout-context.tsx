@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useContext } from "react";
-import { GlobalQuery } from "../../tina/__generated__/types";
+type GlobalSettings = any;
 
 interface LayoutState {
   globalSettings: GlobalQuery["global"];
