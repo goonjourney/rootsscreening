@@ -157,6 +157,27 @@ const filteredLocations = useMemo(() => {
       window.removeEventListener("open-location-detail" as any, handleOpenDetailModal);
     };
   }, [locations]);
+  // --- 2b) Dipanggil dari tombol "Jadwal Pemutaran Terdekat" di Hero ---
+useEffect(() => {
+  const handleFocusUpcoming = () => {
+    setActiveRegion("all");
+    setStatusFilter("upcoming");
+
+    const nearest = locations
+      .filter((l) => getStatus(l, today) === "upcoming" && l.date)
+      .sort((a, b) => (a.date as string).localeCompare(b.date as string))[0];
+
+    if (nearest) {
+      setSelectedId(nearest.id);
+      setIsDrawerOpen(true);
+    }
+  };
+
+  window.addEventListener("focus-upcoming-screening", handleFocusUpcoming);
+  return () => {
+    window.removeEventListener("focus-upcoming-screening", handleFocusUpcoming);
+  };
+  }, [locations, today]);
 
   // --- 3) Render ulang marker saat filter region / status Lock View berubah ---
   useEffect(() => {
@@ -237,7 +258,7 @@ const filteredLocations = useMemo(() => {
     : "finished";
 
   return (
-    <section className="relative w-full bg-neutral-950 text-white py-8">
+    <section id="roadshow" className="relative w-full bg-neutral-950 text-white py-8">
       {/* Header + Tab Filter Region */}
       <div className="mx-auto mb-6 flex w-full max-w-7xl flex-col gap-5 px-6 md:flex-row md:items-end md:justify-between lg:px-12">
         <div className="min-w-0">

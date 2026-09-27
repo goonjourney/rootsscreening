@@ -45,10 +45,11 @@ export default function Hero({ data }: { data: any }) {
               <button
                 type='button'
                 onClick={() => {
-                  const roadshowSection = document.getElementById('roadshow');
-                  if (roadshowSection) {
-                    roadshowSection.scrollIntoView({ behavior: 'smooth' });
-                  }
+                window.dispatchEvent(new CustomEvent('focus-upcoming-screening'));
+                const roadshowSection = document.getElementById('roadshow');
+                if (roadshowSection) {
+                roadshowSection.scrollIntoView({ behavior: 'smooth' });
+                }
                 }}
                 className='px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs tracking-widest uppercase rounded shadow-lg transition-all hover:scale-105'
               >
