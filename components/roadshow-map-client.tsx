@@ -27,6 +27,7 @@ const TILE_ATTRIBUTION =
   const { lang } = useLanguage();
 
   const [detailModalLocation, setDetailModalLocation] = useState<RoadshowLocation | null>(null);
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
 
   // State baru untuk Lock View & Multi Seleksi
   const [isLockView, setIsLockView] = useState(false);
@@ -466,12 +467,17 @@ useEffect(() => {
           <div className="relative w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col text-neutral-300 text-sm">
             <div className="relative h-48 sm:h-56 w-full bg-neutral-950">
               <img
-                src={
-                  detailModalLocation.thumbnailUrl ||
-                  "https://michaelschindhelm.com/wp-content/uploads/2024/05/ROOTS_Arma.jpg"
-                }
-                alt={lang === "id" ? detailModalLocation.name_id : detailModalLocation.name_en}
-                className="w-full h-full object-cover"
+              src={
+              detailModalLocation.thumbnailUrl ||
+              "https://michaelschindhelm.com/wp-content/uploads/2024/05/ROOTS_Arma.jpg"
+              }
+              alt={lang === "id" ? detailModalLocation.name_id : detailModalLocation.name_en}
+              className="w-full h-full object-cover cursor-zoom-in"
+              onClick={() => {
+              const cover = detailModalLocation.thumbnailUrl;
+              const images = cover ? [cover, ...(detailModalLocation.gallery ?? [])] : (detailModalLocation.gallery ?? []);
+              if (images.length) setLightbox({ images, index: 0 });
+              }}
               />
               <button
                 onClick={() => setDetailModalLocation(null)}
@@ -538,10 +544,15 @@ useEffect(() => {
       </span>
       <div className="flex gap-2 overflow-x-auto pb-1">
         {detailModalLocation.gallery.map((src, i) => (
-          <a key={i} href={src} target="_blank" rel="noreferrer" className="flex-none">
-            <img src={src} alt="" className="h-24 w-36 rounded object-cover" />
-          </a>
-        ))}
+        <button
+        key={i}
+        type="button"
+        onClick={() => setLightbox({ images: detailModalLocation.gallery!, index: i })}
+        className="flex-none"
+      >
+      <img src={src} alt="" className="h-24 w-36 rounded object-cover cursor-zoom-in" />
+      </button>
+      ))}
       </div>
     </div>
   )}
@@ -630,6 +641,14 @@ useEffect(() => {
           font-family: inherit;
         }
       `}</style>
+      {lightbox && (
+      <Lightbox
+      images={lightbox.images}
+      index={lightbox.index}
+      onClose={() => setLightbox(null)}
+      onIndexChange={(i) => setLightbox({ ...lightbox, index: i })}
+      />
+      )}
     </section>
   );
 }
@@ -698,6 +717,80 @@ function ResetIcon() {
     </svg>
   );
 }
+
+function Lightbox({
+  images,
+  index,
+  onClose,
+  onIndexChange,
+}: {
+  images: string[];
+  index: number;
+  onClose: () => void;
+  onIndexChange: (i: number) => void;
+}) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") onIndexChange((index + 1) % images.length);
+      if (e.key === "ArrowLeft") onIndexChange((index - 1 + images.length) % images.length);
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [index, images.length, onClose, onIndexChange]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/90 p-4"
+      onClick={onClose}
+    >
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 w-9 h-9 rounded-full bg-neutral-900/80 text-white flex items-center justify-center hover:bg-amber-500 hover:text-black transition-all"
+      >
+        ✕
+      </button>
+
+      {images.length > 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onIndexChange((index - 1 + images.length) % images.length);
+          }}
+          className="absolute left-2 sm:left-6 w-10 h-10 rounded-full bg-neutral-900/80 text-white flex items-center justify-center hover:bg-amber-500 hover:text-black transition-all"
+        >
+          ‹
+        </button>
+      )}
+
+      <img
+        src={images[index]}
+        alt=""
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-[85vh] max-w-[90vw] object-contain rounded"
+      />
+
+      {images.length > 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onIndexChange((index + 1) % images.length);
+          }}
+          className="absolute right-2 sm:right-6 w-10 h-10 rounded-full bg-neutral-900/80 text-white flex items-center justify-center hover:bg-amber-500 hover:text-black transition-all"
+        >
+          ›
+        </button>
+      )}
+
+      {images.length > 1 && (
+        <span className="absolute bottom-4 text-xs font-mono text-neutral-300">
+          {index + 1} / {images.length}
+        </span>
+      )}
+    </div>
+  );
+}
+
 function StatusBadge({ status, lang }: { status: ScreeningStatus; lang: "id" | "en" }) {
   const s = {
     upcoming: { id: "MENDATANG", en: "UPCOMING", cls: "border-amber-500 bg-amber-500 text-neutral-950" },
